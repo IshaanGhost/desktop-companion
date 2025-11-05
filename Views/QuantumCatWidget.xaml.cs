@@ -88,44 +88,44 @@ namespace DesktopCompanions
 
         private Icon CreateCatIcon(int frameNumber)
         {
-            // Create a 32x32 icon showing a running cat - half size for widget display
-            using (var bitmap = new Bitmap(32, 32))
+            // Create a 48x48 icon showing a running cat - slightly bigger for widget display
+            using (var bitmap = new Bitmap(48, 48))
             using (var graphics = Graphics.FromImage(bitmap))
             {
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 graphics.Clear(Color.Transparent);
 
                 var catColor = Color.FromArgb(100, 100, 100);
-                var catDark = Color.Black;
+                var catDark = Color.White; // White borders
 
                 // Animation offset based on frame
-                int offsetX = (frameNumber % 2) * 1;
-                int offsetY = (frameNumber % 4 < 2) ? 0 : 1;
+                int offsetX = (frameNumber % 2) * 2;
+                int offsetY = (frameNumber % 4 < 2) ? 0 : 2;
 
-                // Cat head (scaled down for half size)
-                graphics.FillEllipse(new SolidBrush(catColor), 12 + offsetX, 4 + offsetY, 12, 12);
-                graphics.DrawEllipse(new Pen(catDark, 1), 12 + offsetX, 4 + offsetY, 12, 12);
+                // Cat head (scaled up)
+                graphics.FillEllipse(new SolidBrush(catColor), 18 + offsetX, 6 + offsetY, 18, 18);
+                graphics.DrawEllipse(new Pen(catDark, 2), 18 + offsetX, 6 + offsetY, 18, 18);
 
-                // Cat ears (smaller triangles)
+                // Cat ears (larger triangles)
                 graphics.FillPolygon(new SolidBrush(catDark), new Point[] {
-                    new Point(14 + offsetX, 4 + offsetY), new Point(16 + offsetX, 0), new Point(18 + offsetX, 4 + offsetY)
+                    new Point(21 + offsetX, 6 + offsetY), new Point(24 + offsetX, 0), new Point(27 + offsetX, 6 + offsetY)
                 });
                 graphics.FillPolygon(new SolidBrush(catDark), new Point[] {
-                    new Point(18 + offsetX, 4 + offsetY), new Point(20 + offsetX, 0), new Point(22 + offsetX, 4 + offsetY)
+                    new Point(27 + offsetX, 6 + offsetY), new Point(30 + offsetX, 0), new Point(33 + offsetX, 6 + offsetY)
                 });
 
-                // Eyes
-                graphics.FillEllipse(new SolidBrush(Color.Black), 15 + offsetX, 8 + offsetY, 2, 2);
-                graphics.FillEllipse(new SolidBrush(Color.Black), 19 + offsetX, 8 + offsetY, 2, 2);
+                // Eyes (keep black for visibility)
+                graphics.FillEllipse(new SolidBrush(Color.Black), 22 + offsetX, 12 + offsetY, 3, 3);
+                graphics.FillEllipse(new SolidBrush(Color.Black), 29 + offsetX, 12 + offsetY, 3, 3);
 
                 // Cat body
-                graphics.FillEllipse(new SolidBrush(catColor), 14 + offsetX, 14 + offsetY, 10, 10);
-                graphics.DrawEllipse(new Pen(catDark, 1), 14 + offsetX, 14 + offsetY, 10, 10);
+                graphics.FillEllipse(new SolidBrush(catColor), 21 + offsetX, 21 + offsetY, 15, 15);
+                graphics.DrawEllipse(new Pen(catDark, 2), 21 + offsetX, 21 + offsetY, 15, 15);
 
                 // Cat tail (swings based on frame)
                 int tailOffset = (frameNumber % 3) - 1;
-                graphics.FillRectangle(new SolidBrush(catColor), 24 + offsetX + tailOffset, 16 + offsetY, 4, 6);
-                graphics.DrawRectangle(new Pen(catDark, 1), 24 + offsetX + tailOffset, 16 + offsetY, 4, 6);
+                graphics.FillRectangle(new SolidBrush(catColor), 36 + offsetX + tailOffset * 2, 24 + offsetY, 6, 9);
+                graphics.DrawRectangle(new Pen(catDark, 2), 36 + offsetX + tailOffset * 2, 24 + offsetY, 6, 9);
 
                 // Convert bitmap to icon
                 var hIcon = bitmap.GetHicon();
@@ -140,7 +140,7 @@ namespace DesktopCompanions
             try
             {
                 var icon = _catIcons[frameIndex];
-                var bitmapImage = Utils.IconConverter.IconToBitmapImage(icon, 32);
+                var bitmapImage = Utils.IconConverter.IconToBitmapImage(icon, 48);
                 CatIconImage.Source = bitmapImage;
             }
             catch (Exception ex)

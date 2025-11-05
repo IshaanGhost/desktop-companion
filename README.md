@@ -7,42 +7,81 @@ A lightweight Windows desktop application featuring two animated system monitori
 ## Features
 
 ### 🐱 Quantum Cat Widget
-- **Compact Size**: Small 50x50 pixel widget positioned above the taskbar
+- **Size**: 75x75 pixel widget positioned above the taskbar
+- **Visual Design**: 
+  - Gray cat with white borders for high visibility
+  - 8-frame running animation with smooth transitions
+  - Icon size: 48x48 pixels (widget display)
 - **CPU/RAM Monitoring**: The cat's animation speed reflects your CPU usage in real-time
-  - **Idle** (< 20% CPU): Cat animates slowly (200ms per frame)
-  - **Medium** (20-60% CPU): Cat animates at normal speed (100ms per frame)
-  - **High** (60-90% CPU): Cat animates quickly (60ms per frame)
-  - **Critical** (>90% CPU): Cat animates very fast (40ms per frame)
+  - **Idle** (< 20% CPU): Cat animates slowly (200ms per frame) - relaxed running
+  - **Medium** (20-60% CPU): Cat animates at normal speed (100ms per frame) - steady pace
+  - **High** (60-90% CPU): Cat animates quickly (60ms per frame) - fast running
+  - **Critical** (>90% CPU): Cat animates very fast (40ms per frame) - frantic sprinting
 - **Programmatic Icon Animation**: 8-frame running animation with dynamically generated icons
-- **Hover Tooltip**: Shows real-time CPU usage, RAM usage, and animation state
-- **Real-time Monitoring**: Updates every 500ms
+  - Icons are generated at runtime using System.Drawing
+  - Each frame shows the cat in a different running pose
+  - Animation loops seamlessly
+- **Hover Tooltip**: Shows real-time system data when you hover over the widget
+  - CPU Usage: Current CPU percentage with 1 decimal place
+  - RAM Usage: Current RAM percentage with 1 decimal place
+  - Animation State: Current state name (Idle/Medium/High/HighLoad)
+- **Real-time Monitoring**: Updates every 500ms for responsive feedback
 
 ### 🧪 Goblin's Jar Widget
-- **Compact Size**: Small 60x70 pixel widget positioned above the taskbar
+- **Size**: 90x105 pixel widget positioned above the taskbar
+- **Visual Design**:
+  - Transparent blue-tinted glass jar outline (no background fill)
+  - Glowing goblin sprite inside that changes color based on battery status
+  - Icon size: 60x75 pixels (widget display)
+  - Smooth animations: floating, shaking, rotating, and pulsing effects
 - **Battery Status Monitoring**: The goblin inside the jar reflects your laptop's battery level
-  - **High Charge** (70-100%): Brightly lit goblin dancing playfully
-  - **Medium Charge** (20-70%): Moderately lit goblin casually observing
-  - **Low Charge** (< 20%): Dimly lit goblin shivering with flickering light
-  - **Critical Charge** (< 10%): Panicking goblin with red flashing alerts
-  - **Charging**: Goblin vigorously pumping with green/blue sparks
-  - **Full Charge**: Sleeping goblin with bright, contented glow
+  - **High Charge** (70-100%): Brightly lit goblin (cyan/green) dancing playfully with gentle vertical movement
+  - **Medium Charge** (20-70%): Moderately lit goblin (orange) casually observing with slow horizontal sway
+  - **Low Charge** (10-20%): Dimly lit goblin (dark orange) shivering with flickering light and fast horizontal movement
+  - **Critical Charge** (< 10%): Panicking goblin (red) with red flashing alerts and frantic shaking
+  - **Charging**: Goblin vigorously pumping (bright green) with yellow sparkles and rotating animation
+  - **Full Charge** (100% while charging): Sleeping goblin (cyan) with bright, contented glow and gentle pulsing
 - **Transparent Design**: Translucent blue-tinted glass jar outline with glowing goblin (no background fill)
-- **Hover Tooltip**: Shows real-time battery percentage, charging status, and animation state
-- **Real-time Monitoring**: Updates every 500ms
+  - Only the jar outline is drawn (no fill)
+  - Blue color: #5AA5F5
+  - Goblin color changes dynamically based on battery level
+- **Hover Tooltip**: Shows real-time battery data when you hover over the widget
+  - Battery: Current battery percentage (0-100%)
+  - Status: "Charging" or "On Battery"
+  - Animation State: Current state name (High/Medium/Low/Critical/Charging/Full)
+- **Real-time Monitoring**: Updates every 500ms for responsive feedback
 
 ### ⚙️ Configuration Features
 - **System Tray Integration**: Access settings via system tray icon with animated cat and jar icons
-  - Icon animation speed reflects CPU usage
-  - Icon changes to goblin when battery is charging or low
-  - Hover tooltip shows CPU and battery status
-- **Compact Widgets**: Half-size widgets (50x50 cat, 60x70 jar) positioned above taskbar
+  - **Icon Animation**: System tray icon shows animated cat when system is normal
+    - Icon animation speed reflects CPU usage (faster CPU = faster animation)
+    - 8-frame cat animation cycles through running poses
+  - **Icon Override**: Icon changes to goblin when battery conditions are met
+    - Shows goblin charging icon when battery is plugged in and charging
+    - Shows goblin low icon when battery is below 20% and discharging
+  - **Hover Tooltip**: Hover over system tray icon to see:
+    - CPU usage percentage
+    - Battery percentage and charging status
+  - **Context Menu**: Right-click for quick access to Settings and Exit
+- **Widget Sizes**: 
+  - Cat widget: 75x75 pixels
+  - Jar widget: 90x105 pixels
+  - Both widgets positioned above taskbar by default
 - **Interactive Tooltips**: Hover over widgets to see real-time system data
+  - Tooltips update automatically as values change
+  - Shows formatted percentages and status text
+- **Drag & Drop**: 
+  - Click and drag the transparent border area (10px border) around each widget
+  - Widgets remain visible during dragging
+  - Click-through is temporarily disabled during drag for smooth operation
 - **Configurable Widgets**: Enable/disable and reposition each widget
-- **Customizable Thresholds**: Adjust CPU and battery thresholds
+- **Customizable Thresholds**: Adjust CPU and battery thresholds in settings
 - **Always on Top**: Keep widgets visible above other windows
-- **Startup Option**: Automatically launch on Windows startup
-- **Persistent Settings**: All preferences saved automatically
+- **Startup Option**: Automatically launch on Windows startup (registry-based)
+- **Persistent Settings**: All preferences saved automatically to JSON file
 - **Click-Through**: Widgets allow clicks to pass through except for drag handles
+  - You can interact with windows behind the widgets
+  - Only the drag handle area captures mouse clicks
 
 ## Requirements
 
@@ -97,31 +136,51 @@ A lightweight Windows desktop application featuring two animated system monitori
 
 ### First Launch
 
-1. Launch the application - you'll see the compact widgets appear above your taskbar
-2. Hover over widgets to see real-time system data in tooltips
-3. Right-click the system tray icon (or double-click) to open settings
-4. Configure widgets to your preference:
-   - Enable/disable widgets
-   - Set CPU/battery thresholds
-   - Configure startup and always-on-top behavior
+1. **Launch the application** - Run `DesktopCompanions.exe`
+2. **Widgets appear automatically** - You'll see both widgets appear above your taskbar
+   - Cat widget on the right
+   - Jar widget to the left of the cat
+3. **System Tray Icon** - Look for the animated icon in your system tray (notification area)
+4. **Hover over widgets** - Move your mouse over either widget to see real-time system data
+5. **Access Settings** - Right-click the system tray icon (or double-click) to open configuration window
 
-### Moving Widgets
+### Interacting with Widgets
 
-- **Drag Handle**: Click and drag the transparent border area around each widget (10px border)
-- The widgets have click-through enabled, so clicks pass through to windows behind them except for the drag handle area
-- Widgets are positioned above the taskbar by default but can be moved anywhere on your desktop
+**Hover Tooltips:**
+- **Cat Widget**: Shows CPU usage, RAM usage, and current animation state
+- **Jar Widget**: Shows battery percentage, charging status, and current animation state
+- Tooltips update automatically as values change (every 500ms)
+- Tooltips appear after hovering for ~1 second
 
-### Hover Tooltips
+**Moving Widgets:**
+- **Drag Handle**: Click and drag the transparent border area around each widget (10px border on all sides)
+- Widgets remain visible during dragging
+- Widgets can be positioned anywhere on your desktop
+- Position is remembered between sessions
+- **Reset Position**: Use settings window to reset widgets to default position (above taskbar)
 
-- **Cat Widget**: Hover to see CPU usage, RAM usage, and current animation state
-- **Jar Widget**: Hover to see battery percentage, charging status, and current animation state
-- Tooltips update in real-time as values change
+**Click-Through Behavior:**
+- Widgets allow clicks to pass through to windows behind them
+- Only the drag handle area (10px border) captures mouse clicks
+- This allows you to interact with desktop icons and windows behind the widgets
+- Click-through is temporarily disabled during dragging for smooth operation
 
 ### System Tray Menu
 
-- **Settings**: Open configuration window
-- **Exit**: Close the application
-- **Icon Animation**: The system tray icon shows animated cat when normal, goblin when charging/low battery
+Access by right-clicking the system tray icon:
+
+- **Settings**: Opens configuration window
+  - Configure widget visibility
+  - Adjust CPU and battery thresholds
+  - Set startup behavior
+  - Configure always-on-top
+- **Exit**: Closes the application completely
+
+**System Tray Icon Behavior:**
+- **Normal Operation**: Shows animated cat icon (8 frames, speed based on CPU)
+- **Charging**: Shows goblin charging icon (green with sparkles)
+- **Low Battery**: Shows goblin low icon (orange/red with warning)
+- **Hover Tooltip**: Shows current CPU and battery status
 
 ## Configuration
 
@@ -130,69 +189,102 @@ A lightweight Windows desktop application featuring two animated system monitori
 - **Always on Top**: Keep widgets visible above other windows
 
 ### Quantum Cat Settings
-- **Enable Quantum Cat**: Toggle widget visibility
-- **CPU Thresholds**: Customize idle, medium, and high load thresholds
-- **Reset Cat Position**: Reset widget to default position (above taskbar, bottom-right)
+- **Enable Quantum Cat**: Toggle widget visibility on/off
+- **CPU Thresholds**: Customize when animation state changes
+  - Idle threshold: Default < 20% CPU
+  - Medium threshold: Default 20-60% CPU
+  - High threshold: Default 60-90% CPU
+  - Critical threshold: Default > 90% CPU
+- **Reset Cat Position**: Reset widget to default position (above taskbar, bottom-right corner)
+- **Widget Size**: Fixed at 75x75 pixels (not configurable in UI)
 
 ### Goblin's Jar Settings
-- **Enable Goblin's Jar**: Toggle widget visibility
-- **Battery Thresholds**: Customize low and critical battery levels
+- **Enable Goblin's Jar**: Toggle widget visibility on/off
+- **Battery Thresholds**: Customize when battery state changes
+  - Low battery threshold: Default < 20%
+  - Critical battery threshold: Default < 10%
+  - Medium threshold: Default 20-70%
+  - High threshold: Default 70-100%
 - **Reset Jar Position**: Reset widget to default position (above taskbar, left of cat)
+- **Widget Size**: Fixed at 90x105 pixels (not configurable in UI)
 
-## Assets
+## Assets & Icon Generation
 
-The application generates icons programmatically:
+The application generates all icons programmatically at runtime using System.Drawing:
 
-- **Cat Icons**: 8-frame running animation generated dynamically
-  - 32x32 pixels per frame (widget display)
-  - 16x16 pixels per frame (system tray)
-  - Animation speed varies with CPU load
-  
-- **Jar Icons**: Dynamically generated based on battery status
-  - 40x50 pixels (widget display)
-  - 16x16 pixels (system tray)
-  - Transparent background with blue jar outline
-  - Goblin color changes based on battery level
+### Cat Icons
+- **Widget Display**: 48x48 pixels per frame
+  - 8-frame running animation
+  - Gray cat body with white borders for visibility
+  - Black eyes for contrast
+  - Smooth anti-aliased rendering
+- **System Tray**: 16x16 pixels per frame
+  - Same 8-frame animation, scaled down
+  - Simplified for small icon size
+- **Animation Speed**: Dynamically adjusts based on CPU load
+  - Idle: 200ms per frame
+  - Medium: 100ms per frame
+  - High: 60ms per frame
+  - Critical: 40ms per frame
 
-**Note**: Icons are generated at runtime - no external image files required for widget display.
+### Jar Icons
+- **Widget Display**: 60x75 pixels
+  - Transparent background (no fill)
+  - Blue jar outline (#5AA5F5) with 3px stroke
+  - Glowing goblin sprite inside (12x12 pixels)
+  - Goblin color varies by battery level:
+    - Cyan: Full (>80%)
+    - Green: Good (50-80%)
+    - Orange: Medium (30-50%)
+    - Dark Orange: Low (20-30%)
+    - Red: Critical (<20%)
+    - Bright Green: Charging
+- **System Tray**: 16x16 pixels
+  - Simplified jar and goblin representation
+  - Same color-coding as widget version
+- **Special Effects**:
+  - Charging: Yellow sparkles around goblin
+  - Low Battery: Red warning border
+
+**Note**: All icons are generated at runtime using System.Drawing.Graphics - no external image files required. This ensures consistent rendering across different systems and allows for dynamic color changes.
 
 ## Project Structure
 
 ```
 DesktopCompanion/
 ├── Assets/
-│   └── cat_running_spritesheet.png  # Cat animation sprite sheet
+│   └── cat_running_spritesheet.png  # Legacy sprite sheet (not used in current version)
 ├── Models/
-│   ├── AppSettings.cs               # Settings model
-│   └── SystemMetrics.cs             # System metrics model
+│   ├── AppSettings.cs               # Settings model with serialization
+│   └── SystemMetrics.cs             # System metrics data structures
 ├── Services/
-│   ├── PerformanceMonitorService.cs  # CPU/RAM/Battery monitoring
-│   ├── SettingsService.cs            # Settings persistence
-│   ├── StartupService.cs             # Windows startup management
-│   └── SystemTrayService.cs         # System tray integration
+│   ├── PerformanceMonitorService.cs  # CPU/RAM/Battery monitoring via Performance Counters and WMI
+│   ├── SettingsService.cs            # Settings persistence (JSON file in AppData)
+│   ├── StartupService.cs             # Windows startup management (registry)
+│   └── SystemTrayService.cs         # System tray integration with dynamic icon animation
 ├── ViewModels/
-│   ├── ConfigurationViewModel.cs     # Configuration ViewModel
-│   ├── GoblinJarViewModel.cs        # Jar widget ViewModel
+│   ├── ConfigurationViewModel.cs     # Configuration window ViewModel
+│   ├── GoblinJarViewModel.cs        # Jar widget ViewModel (battery state logic)
 │   ├── MainViewModel.cs              # Settings window ViewModel
 │   ├── MainWindowViewModel.cs        # Main window ViewModel
-│   └── QuantumCatViewModel.cs       # Cat widget ViewModel
+│   └── QuantumCatViewModel.cs       # Cat widget ViewModel (CPU state logic)
 ├── Views/
-│   ├── GoblinJarWidget.xaml          # Jar widget UI
-│   ├── GoblinJarWidget.xaml.cs       # Jar widget code-behind
-│   ├── QuantumCatWidget.xaml         # Cat widget UI
-│   └── QuantumCatWidget.xaml.cs      # Cat widget code-behind
+│   ├── GoblinJarWidget.xaml          # Jar widget UI (XAML)
+│   ├── GoblinJarWidget.xaml.cs       # Jar widget code-behind (icon generation, drag handling)
+│   ├── QuantumCatWidget.xaml         # Cat widget UI (XAML)
+│   └── QuantumCatWidget.xaml.cs      # Cat widget code-behind (icon generation, animation, drag handling)
 ├── Utils/
-│   ├── IconConverter.cs              # Icon to BitmapImage conversion
-│   └── WindowUtils.cs                # Window manipulation utilities
+│   ├── IconConverter.cs              # Icon to BitmapImage conversion utility
+│   └── WindowUtils.cs                # Window manipulation utilities (click-through, P/Invoke)
 ├── Styles/
-│   └── DefaultStyles.xaml            # Application styles
-├── App.xaml                          # Application entry point
-├── App.xaml.cs                       # Application startup logic
-├── MainWindow.xaml                   # Settings window UI
+│   └── DefaultStyles.xaml            # Application-wide styles
+├── App.xaml                          # Application entry point (XAML)
+├── App.xaml.cs                       # Application startup logic and exception handling
+├── MainWindow.xaml                   # Settings/Configuration window UI
 ├── MainWindow.xaml.cs                # Settings window code-behind
-├── DesktopCompanion.csproj           # Project file
-├── build-single-exe.bat              # Build script (Windows)
-├── build-single-exe.ps1              # Build script (PowerShell)
+├── DesktopCompanion.csproj           # Project file with build configuration
+├── build-single-exe.bat              # Build script for Windows (batch)
+├── build-single-exe.ps1              # Build script for PowerShell
 └── README.md                         # This file
 ```
 
@@ -207,11 +299,31 @@ The application follows the **MVVM (Model-View-ViewModel)** pattern:
 
 ### Key Technologies
 
-- **WPF (Windows Presentation Foundation)**: UI framework
-- **Windows Performance Counters**: System metrics collection
-- **System.Windows.Forms**: Battery status and system tray integration
-- **P/Invoke**: Windows API calls for click-through functionality
-- **Sprite Sheet Animation**: Custom frame-by-frame animation for the cat widget
+- **WPF (Windows Presentation Foundation)**: UI framework for transparent windows and rich animations
+- **Windows Performance Counters**: System metrics collection for CPU and RAM monitoring
+  - CPU: "% Processor Time" counter
+  - RAM: "% Committed Bytes In Use" counter
+- **WMI (Windows Management Instrumentation)**: Battery status monitoring
+  - `Win32_Battery` class for battery percentage
+  - `Win32_PowerSupply` for charging status
+- **System.Windows.Forms**: 
+  - `NotifyIcon` for system tray integration
+  - `PowerLineStatus` enum for battery charging detection
+- **System.Drawing**: Programmatic icon generation
+  - `Graphics` and `Bitmap` for drawing icons
+  - `GraphicsPath` for complex shapes (jar outline)
+  - Anti-aliasing for smooth rendering
+- **P/Invoke**: Windows API calls for advanced window functionality
+  - `SetWindowLong` for window styles
+  - `WM_NCHITTEST` for click-through implementation
+  - `HTTRANSPARENT` for transparent hit testing
+- **MVVM Pattern**: Separation of concerns
+  - ViewModels handle business logic and state
+  - Views handle UI presentation
+  - Data binding for automatic updates
+- **DispatcherTimer**: For smooth animation timing
+  - Thread-safe updates to UI elements
+  - Configurable intervals based on system state
 
 ## Building for Distribution
 
@@ -260,33 +372,48 @@ bin/Release/net8.0-windows/win-x64/publish/
    mkdir DesktopCompanions-v1.0.0
    ```
 
-2. Copy files:
-   - `DesktopCompanions.exe`
-   - `Assets/` folder (with `cat_running_spritesheet.png`)
+2. Copy the executable:
+   - `DesktopCompanions.exe` (single-file, self-contained)
 
 3. Create ZIP archive:
    ```powershell
    Compress-Archive -Path DesktopCompanions-v1.0.0\* -DestinationPath DesktopCompanions-v1.0.0.zip
    ```
 
+**Note**: The `Assets` folder is no longer required as icons are generated programmatically.
+
 ### Size Considerations
 
-- **Self-contained single-file**: ~68 MB (includes full .NET 8.0 runtime)
-- **Assets folder**: ~2 KB (sprite sheet)
-- **Total distribution**: ~68 MB
+- **Self-contained single-file**: ~68-70 MB (includes full .NET 8.0 runtime)
+- **No external assets required**: All icons generated at runtime
+- **Total distribution**: Single executable file (~68-70 MB)
+- **Memory usage**: ~50-100 MB when running (depends on system state)
 
 ## Troubleshooting
 
 ### Widgets Not Appearing
-- Check if widgets are enabled in settings (right-click system tray icon)
-- Ensure the application is running (check system tray for cat/jar icon)
-- Try resetting widget positions in settings
-- Check error log at `%AppData%\DesktopCompanion\error.log`
+- Check if widgets are enabled in settings (right-click system tray icon → Settings)
+- Ensure the application is running (check system tray for animated cat/jar icon)
+- Widgets appear above the taskbar by default - check bottom of screen
+- Try resetting widget positions in settings (may have been moved off-screen)
+- Check error log at `%AppData%\DesktopCompanion\error.log` for detailed error messages
+- Verify Windows allows transparent windows (some themes may interfere)
+- Ensure no other applications are blocking window creation
+
+### Tooltips Not Showing Data
+- Tooltips show labels but no values: This indicates a DataContext binding issue
+  - Fixed in latest version by setting DataContext programmatically
+  - Ensure you're using the latest build
+  - Tooltips require the ViewModel to be properly initialized
+- Tooltips not appearing: Hover over the widget and wait ~1 second
+- Tooltip data not updating: Check if PerformanceMonitorService is running (should update every 500ms)
 
 ### Cat Animation Not Working
 - Cat icons are generated programmatically - no external files needed
-- Check error log for icon generation errors
-- Verify the application has proper graphics context
+- Check error log for icon generation errors: `%AppData%\DesktopCompanion\error.log`
+- Verify the application has proper graphics context (System.Drawing should work on all Windows systems)
+- Ensure .NET 8.0 runtime is available (included in self-contained build)
+- Try running as Administrator if issues persist
 
 ### Performance Counters Not Working
 - Run the application as Administrator (may be required for some performance counters)
@@ -301,14 +428,23 @@ bin/Release/net8.0-windows/win-x64/publish/
 ### Click-Through Not Working
 - Click-through is implemented for the entire window except the drag handle
 - The drag handle is a 10px transparent border around each widget
-- If you can't drag widgets, try clicking closer to the edges
+- If you can't drag widgets, try clicking closer to the edges (within 10px of widget border)
 - Ensure the widget is not minimized or hidden
+- Click-through is temporarily disabled during dragging - this is normal behavior
+- If widgets are completely unresponsive, check error log for WindowUtils issues
 
 ### Application Crashes on Startup
 - Check error log at `%AppData%\DesktopCompanion\error.log`
+  - Log file location: `%LocalAppData%\DesktopCompanion\error.log`
+  - Contains detailed stack traces and error messages
 - Ensure .NET 8.0 runtime is available (included in self-contained build)
-- Try running as Administrator
+- Try running as Administrator (may be required for some performance counters)
 - Check Windows Event Viewer for detailed error messages
+  - Open Event Viewer → Windows Logs → Application
+  - Look for errors from "DesktopCompanions"
+- Verify Windows Performance Counters are accessible
+- Some antivirus software may block performance counter access
+- Ensure WMI service is running (usually automatic)
 
 ## Development
 
@@ -322,13 +458,13 @@ bin/Release/net8.0-windows/win-x64/publish/
 dotnet run
 ```
 
-### Generating Cat Sprite Sheet
-A Python script is included to generate the cat sprite sheet:
-```bash
-python generate_cat_sprite.py
-```
+### Icon Generation
+All icons are generated programmatically at runtime using System.Drawing:
+- **Cat Icons**: Generated in `QuantumCatWidget.xaml.cs` using `CreateCatIcon()` method
+- **Jar Icons**: Generated in `GoblinJarWidget.xaml.cs` using `CreateGoblin*Icon()` methods
+- **System Tray Icons**: Generated in `SystemTrayService.cs` using `CreateCatIcon()` and `CreateGoblin*Icon()` methods
 
-This generates `cat_running_spritesheet.png` with 16 frames of pixel art animation.
+**Note**: The legacy Python script `generate_cat_sprite.py` and sprite sheet are no longer used. All icons are now generated programmatically for better performance and consistency.
 
 ## Contributing
 
