@@ -116,8 +116,20 @@ namespace DesktopCompanion
         /// </summary>
         public static void DisableClickThrough(Window window)
         {
+            // Ensure window handle is initialized
+            if (!window.IsLoaded)
+            {
+                window.Loaded += (s, e) => DisableClickThrough(window);
+                return;
+            }
+
             var hwnd = new WindowInteropHelper(window).Handle;
-            if (hwnd == IntPtr.Zero) return;
+            if (hwnd == IntPtr.Zero)
+            {
+                // If handle not ready, try again after SourceInitialized
+                window.SourceInitialized += (s, e) => DisableClickThrough(window);
+                return;
+            }
 
             var extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
             SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle & ~WS_EX_TRANSPARENT);

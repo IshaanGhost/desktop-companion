@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -54,6 +55,16 @@ namespace DesktopCompanions
             LoadCatIcons();
 
             // Start icon animation
+            
+            // Set tooltip DataContext after window is loaded
+            Loaded += (s, e) =>
+            {
+                if (CatIconImage?.ToolTip is ToolTip tooltip)
+                {
+                    tooltip.DataContext = _viewModel;
+                }
+            };
+            
             StartIconAnimation();
         }
 
@@ -189,18 +200,48 @@ namespace DesktopCompanions
 
         private void DragHandle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _isDragging = true;
-            _dragStartPoint = e.GetPosition(this);
-            DragHandle.CaptureMouse();
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                _isDragging = true;
+                
+                // Capture initial mouse position and window position
+                var mousePos = e.GetPosition(this);
+                _dragStartPoint = mousePos;
+                
+                // Store initial window position
+                var initialLeft = Left;
+                var initialTop = Top;
+                
+                DragHandle.CaptureMouse();
+                
+                // Ensure window is visible and active
+                Visibility = Visibility.Visible;
+                Show();
+                Activate();
+                
+                // Temporarily disable click-through during drag
+                WindowUtils.DisableClickThrough(this);
+            }
         }
 
         private void DragHandle_MouseMove(object sender, MouseEventArgs e)
         {
             if (_isDragging && e.LeftButton == MouseButtonState.Pressed)
             {
-                var currentPoint = e.GetPosition(null);
-                var newLeft = currentPoint.X - _dragStartPoint.X;
-                var newTop = currentPoint.Y - _dragStartPoint.Y;
+                // Get current mouse position relative to window
+                var currentPos = e.GetPosition(this);
+                
+                // Calculate offset from initial drag point
+                var deltaX = currentPos.X - _dragStartPoint.X;
+                var deltaY = currentPos.Y - _dragStartPoint.Y;
+                
+                // Get current window position (before any changes)
+                var currentLeft = Left;
+                var currentTop = Top;
+                
+                // Calculate new window position
+                var newLeft = currentLeft + deltaX;
+                var newTop = currentTop + deltaY;
 
                 // Keep widget within screen bounds
                 var screenWidth = SystemParameters.PrimaryScreenWidth;
@@ -209,15 +250,33 @@ namespace DesktopCompanions
                 newLeft = Math.Max(0, Math.Min(newLeft, screenWidth - Width));
                 newTop = Math.Max(0, Math.Min(newTop, screenHeight - Height));
 
+                // Update window position
                 Left = newLeft;
                 Top = newTop;
+                
+                // Reset drag start point to current position for next iteration
+                _dragStartPoint = currentPos;
+                
+                // Ensure window stays visible
+                Visibility = Visibility.Visible;
+                Show();
             }
         }
 
         private void DragHandle_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            _isDragging = false;
-            DragHandle.ReleaseMouseCapture();
+            if (_isDragging)
+            {
+                _isDragging = false;
+                DragHandle.ReleaseMouseCapture();
+                
+                // Re-enable click-through after drag
+                WindowUtils.SetClickThrough(this);
+                
+                // Ensure window stays visible
+                Visibility = Visibility.Visible;
+                Show();
+            }
         }
 
         protected override void OnClosed(EventArgs e)

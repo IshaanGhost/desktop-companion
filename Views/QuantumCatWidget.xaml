@@ -44,18 +44,18 @@
                             <TranslateTransform/>
                         </Image.RenderTransform>
                         <Image.ToolTip>
-                            <ToolTip>
+                            <ToolTip x:Name="CatToolTip">
                                 <StackPanel>
                                     <TextBlock Text="Quantum Cat Widget" FontWeight="Bold" Margin="0,0,0,5"/>
                                     <TextBlock>
                                         <Run Text="CPU Usage: "/>
-                                        <Run Text="{Binding CpuLoad, StringFormat={}{0:F1}%}" FontWeight="Bold"/>
+                                        <Run Text="{Binding CpuLoad, Mode=OneWay, StringFormat={}{0:F1}%}" FontWeight="Bold"/>
                                     </TextBlock>
                                     <TextBlock>
                                         <Run Text="RAM Usage: "/>
-                                        <Run Text="{Binding RamUsage, StringFormat={}{0:F1}%}" FontWeight="Bold"/>
+                                        <Run Text="{Binding RamUsage, Mode=OneWay, StringFormat={}{0:F1}%}" FontWeight="Bold"/>
                                     </TextBlock>
-                                    <TextBlock Text="{Binding AnimationStateName}" Margin="0,5,0,0" FontStyle="Italic"/>
+                                    <TextBlock Text="{Binding AnimationStateName, Mode=OneWay}" Margin="0,5,0,0" FontStyle="Italic"/>
                                 </StackPanel>
                             </ToolTip>
                         </Image.ToolTip>
