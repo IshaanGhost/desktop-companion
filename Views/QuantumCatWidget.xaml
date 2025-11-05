@@ -1,0 +1,71 @@
+<Window x:Class="DesktopCompanions.QuantumCatWidget"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DesktopCompanions.ViewModels"
+        Title="Quantum Cat" 
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        Width="100"
+        Height="100">
+    
+    <Window.Resources>
+        <!-- Sprite sheet animations are handled in code-behind -->
+    </Window.Resources>
+
+    <Grid>
+        <!-- Drag Handle Area (10px border) -->
+        <Border x:Name="DragHandle" 
+                Background="Transparent" 
+                MouseLeftButtonDown="DragHandle_MouseLeftButtonDown"
+                MouseMove="DragHandle_MouseMove"
+                MouseLeftButtonUp="DragHandle_MouseLeftButtonUp"
+                Cursor="SizeAll">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Margin" Value="-10"/>
+                    <Setter Property="Padding" Value="10"/>
+                </Style>
+            </Border.Style>
+            
+            <!-- Cat Display Area -->
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="64" Height="64" ClipToBounds="True">
+                    <!-- Glow effect for critical state -->
+                    <Ellipse x:Name="CatGlow" 
+                            Width="80" Height="80" 
+                            Canvas.Left="-8" Canvas.Top="-8"
+                            Opacity="0.3">
+                        <Ellipse.Fill>
+                            <SolidColorBrush Color="#00FF0000"/>
+                        </Ellipse.Fill>
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="HighLoad">
+                                        <Setter Property="Opacity" Value="0.6"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+
+                    <!-- Cat Sprite Sheet Image -->
+                    <Image x:Name="CatImage" 
+                           Width="32" Height="32"
+                           RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <TranslateTransform/>
+                        </Image.RenderTransform>
+                        <Image.Clip>
+                            <RectangleGeometry x:Name="SpriteClip" Rect="0,0,32,32"/>
+                        </Image.Clip>
+                    </Image>
+                </Canvas>
+            </Viewbox>
+        </Border>
+    </Grid>
+</Window>
