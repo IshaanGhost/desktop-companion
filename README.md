@@ -2,14 +2,18 @@
 
 A lightweight Windows desktop application featuring two animated system monitoring widgets that provide visual feedback about your computer's performance.
 
+![Desktop Companions](https://img.shields.io/badge/platform-Windows-blue) ![.NET](https://img.shields.io/badge/.NET-8.0-purple) ![License](https://img.shields.io/badge/license-MIT-green)
+
 ## Features
 
 ### 🐱 Quantum Cat Widget
-- **CPU/RAM Monitoring**: The cat's animation reflects your CPU usage in real-time
-  - **Idle** (< 20% CPU): Cat sleeps, stretches, or grooms slowly
-  - **Medium** (20-60% CPU): Cat trots or walks at moderate speed
-  - **High** (60-90% CPU): Cat sprints quickly across the screen
-  - **Critical** (>90% CPU): Cat panics with red glow and rapid movement
+- **CPU/RAM Monitoring**: The cat's animation speed reflects your CPU usage in real-time
+  - **Idle** (< 20% CPU): Cat animates slowly (200ms per frame)
+  - **Medium** (20-60% CPU): Cat animates at normal speed (100ms per frame)
+  - **High** (60-90% CPU): Cat animates quickly (60ms per frame)
+  - **Critical** (>90% CPU): Cat animates very fast (40ms per frame)
+- **Pixel Art Animation**: 16-frame running animation sprite sheet
+- **Real-time Monitoring**: Updates every 500ms
 
 ### 🧪 Goblin's Jar Widget
 - **Battery Status Monitoring**: The goblin inside the jar reflects your laptop's battery level
@@ -19,39 +23,45 @@ A lightweight Windows desktop application featuring two animated system monitori
   - **Critical Charge** (< 10%): Panicking goblin with red flashing alerts
   - **Charging**: Goblin vigorously pumping with green/blue sparks
   - **Full Charge**: Sleeping goblin with bright, contented glow
+- **Stylized Design**: Translucent blue-tinted glass jar with glowing green goblin sprite
+- **Real-time Monitoring**: Updates every 500ms
 
 ### ⚙️ Configuration Features
-- **System Tray Integration**: Access settings via system tray icon
+- **System Tray Integration**: Access settings via system tray icon (shows cat and jar)
 - **Configurable Widgets**: Enable/disable, resize, and reposition each widget
 - **Customizable Thresholds**: Adjust CPU and battery thresholds
 - **Always on Top**: Keep widgets visible above other windows
 - **Startup Option**: Automatically launch on Windows startup
 - **Persistent Settings**: All preferences saved automatically
+- **Click-Through**: Widgets allow clicks to pass through except for drag handles
 
 ## Requirements
 
-- **OS**: Windows 10/11
-- **.NET**: .NET 8.0 Runtime (included in build)
+- **OS**: Windows 10/11 (64-bit)
+- **.NET**: .NET 8.0 Runtime (included in self-contained build)
 - **Visual Studio** (for building from source): Visual Studio 2022 or later with .NET 8.0 SDK
 
 ## Installation
 
-### Option 1: Download Pre-built Release (Recommended)
+### Option 1: Download Pre-built Release
 
-1. Go to the [Releases](https://github.com/yourusername/desktop-companion/releases) page
-2. Download the latest `DesktopCompanion.zip` file
+1. Go to the [Releases](https://github.com/IshaanGhost/desktop-companion/releases) page
+2. Download the latest release ZIP file
 3. Extract the ZIP file to a folder of your choice
-4. Run `DesktopCompanion.exe`
+4. **Important**: Keep the `Assets` folder next to `DesktopCompanions.exe`
+5. Run `DesktopCompanions.exe`
+
+**Note**: The executable is a self-contained single-file (~68 MB) that includes the .NET runtime, so no additional installation is required.
 
 ### Option 2: Build from Source
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/desktop-companion.git
+   git clone https://github.com/IshaanGhost/desktop-companion.git
    cd desktop-companion
    ```
 
-2. Open the project in Visual Studio 2022 or later
+2. Open the project in Visual Studio 2022 or later, OR use the command line:
 
 3. Restore NuGet packages:
    ```bash
@@ -63,7 +73,16 @@ A lightweight Windows desktop application featuring two animated system monitori
    dotnet build --configuration Release
    ```
 
-5. Run the executable from `bin/Release/net8.0-windows/DesktopCompanion.exe`
+5. For a single-file executable, use the provided build script:
+   ```bash
+   # Windows
+   .\build-single-exe.bat
+   
+   # Or PowerShell
+   .\build-single-exe.ps1
+   ```
+
+6. The executable will be in `bin/Release/net8.0-windows/win-x64/publish/DesktopCompanions.exe`
 
 ## Usage
 
@@ -81,6 +100,7 @@ A lightweight Windows desktop application featuring two animated system monitori
 
 - **Drag Handle**: Click and drag the transparent border area around each widget (10px border)
 - The widgets have click-through enabled, so clicks pass through to windows behind them except for the drag handle area
+- Widgets can be positioned anywhere on your desktop
 
 ### System Tray Menu
 
@@ -105,47 +125,42 @@ A lightweight Windows desktop application featuring two animated system monitori
 - **Battery Thresholds**: Customize low and critical battery levels
 - **Reset Jar Position**: Reset widget to default position
 
-## Adding Custom Assets
+## Assets
 
-The application currently uses placeholder graphics. To add custom pixel art or sprites:
+The application uses the following assets:
 
-### For Quantum Cat:
-1. Create or obtain a sprite sheet with cat animations (e.g., `cat_spritesheet.png`)
-2. Place the file in an `Assets` folder in the project root
-3. Update `QuantumCatWidget.xaml` to reference your image:
-   ```xml
-   <Image Source="Assets/cat_spritesheet.png" ... />
-   ```
-4. Implement sprite sheet animation logic in `QuantumCatWidget.xaml.cs` to cycle through frames
+- **Cat Sprite Sheet**: `Assets/cat_running_spritesheet.png`
+  - 16-frame pixel art running animation
+  - 512x32 pixels (16 frames × 32x32 each)
+  - Retro 16-bit style with 4-color palette
 
-### For Goblin's Jar:
-1. Create or obtain jar and goblin graphics
-2. Place files in the `Assets` folder
-3. Update `GoblinJarWidget.xaml` to reference your images
-
-**Note**: The current implementation uses simple geometric shapes as placeholders. Full sprite sheet support would require additional animation logic.
+**Important**: The `Assets` folder must be in the same directory as the executable for the sprite sheet to load correctly.
 
 ## Project Structure
 
 ```
 DesktopCompanion/
+├── Assets/
+│   └── cat_running_spritesheet.png  # Cat animation sprite sheet
 ├── Models/
-│   ├── AppSettings.cs          # Settings model
-│   └── SystemMetrics.cs       # System metrics model
+│   ├── AppSettings.cs               # Settings model
+│   └── SystemMetrics.cs             # System metrics model
 ├── Services/
 │   ├── PerformanceMonitorService.cs  # CPU/RAM/Battery monitoring
 │   ├── SettingsService.cs            # Settings persistence
 │   ├── StartupService.cs             # Windows startup management
-│   └── SystemTrayService.cs          # System tray integration
+│   └── SystemTrayService.cs         # System tray integration
 ├── ViewModels/
+│   ├── ConfigurationViewModel.cs     # Configuration ViewModel
+│   ├── GoblinJarViewModel.cs        # Jar widget ViewModel
 │   ├── MainViewModel.cs              # Settings window ViewModel
-│   ├── QuantumCatViewModel.cs        # Cat widget ViewModel
-│   └── GoblinJarViewModel.cs         # Jar widget ViewModel
+│   ├── MainWindowViewModel.cs        # Main window ViewModel
+│   └── QuantumCatViewModel.cs       # Cat widget ViewModel
 ├── Views/
-│   ├── QuantumCatWidget.xaml         # Cat widget UI
-│   ├── QuantumCatWidget.xaml.cs      # Cat widget code-behind
 │   ├── GoblinJarWidget.xaml          # Jar widget UI
-│   └── GoblinJarWidget.xaml.cs       # Jar widget code-behind
+│   ├── GoblinJarWidget.xaml.cs       # Jar widget code-behind
+│   ├── QuantumCatWidget.xaml         # Cat widget UI
+│   └── QuantumCatWidget.xaml.cs      # Cat widget code-behind
 ├── Utils/
 │   └── WindowUtils.cs                # Window manipulation utilities
 ├── Styles/
@@ -154,7 +169,10 @@ DesktopCompanion/
 ├── App.xaml.cs                       # Application startup logic
 ├── MainWindow.xaml                   # Settings window UI
 ├── MainWindow.xaml.cs                # Settings window code-behind
-└── DesktopCompanion.csproj           # Project file
+├── DesktopCompanion.csproj           # Project file
+├── build-single-exe.bat              # Build script (Windows)
+├── build-single-exe.ps1              # Build script (PowerShell)
+└── README.md                         # This file
 ```
 
 ## Architecture
@@ -170,42 +188,37 @@ The application follows the **MVVM (Model-View-ViewModel)** pattern:
 
 - **WPF (Windows Presentation Foundation)**: UI framework
 - **Windows Performance Counters**: System metrics collection
-- **WMI (Windows Management Instrumentation)**: Battery status and RAM information
+- **System.Windows.Forms**: Battery status and system tray integration
 - **P/Invoke**: Windows API calls for click-through functionality
+- **Sprite Sheet Animation**: Custom frame-by-frame animation for the cat widget
 
 ## Building for Distribution
 
-### Prerequisites for Distribution
+### Quick Build (Single-File Executable)
 
-Before building, ensure you have:
-- .NET 8.0 SDK installed
-- Visual Studio 2022 or later (recommended)
-- All project dependencies resolved
+Use the provided build scripts:
 
-### Step 1: Create a Release Build
-
-Build the project in Release configuration:
-
+**Windows Batch:**
 ```bash
-dotnet build --configuration Release
+.\build-single-exe.bat
 ```
 
-### Step 2: Publish as Self-Contained Application
-
-Publish the application as a self-contained executable (includes .NET runtime, no installation required):
-
+**PowerShell:**
 ```bash
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
+.\build-single-exe.ps1
 ```
 
-**Options explained:**
-- `-c Release`: Release configuration
-- `-r win-x64`: Target Windows x64 platform
-- `--self-contained true`: Includes .NET runtime (larger but standalone)
-- `-p:PublishSingleFile=true`: Creates a single executable file
-- `-p:IncludeNativeLibrariesForSelfExtract=true`: Embeds native libraries
+**Manual Build:**
+```bash
+dotnet publish -c Release -r win-x64 --self-contained true `
+    -p:PublishSingleFile=true `
+    -p:IncludeNativeLibrariesForSelfExtract=true `
+    -p:EnableCompressionInSingleFile=true `
+    -p:DebugType=None `
+    -p:DebugSymbols=false
+```
 
-### Step 3: Verify Output
+### Build Output
 
 The published files will be in:
 ```
@@ -213,132 +226,88 @@ bin/Release/net8.0-windows/win-x64/publish/
 ```
 
 **Expected files:**
-- `DesktopCompanions.exe` (main executable)
-- `DesktopCompanions.dll` (if not using single file)
-- Supporting DLLs and runtime files
-- `Icon.ico` (application icon, if present)
+- `DesktopCompanions.exe` (main executable, ~68 MB)
+- `Assets/cat_running_spritesheet.png` (sprite sheet)
+- Supporting runtime files (if not single-file)
 
-### Step 4: Create Distribution Package
+**Important**: For distribution, include both the executable and the `Assets` folder.
 
-1. **Create a distribution folder:**
+### Distribution Package
+
+1. Create a folder for distribution:
    ```bash
    mkdir DesktopCompanions-v1.0.0
-   cd DesktopCompanions-v1.0.0
    ```
 
-2. **Copy published files:**
-   - Copy all files from `bin/Release/net8.0-windows/win-x64/publish/`
-   - Include `README.md` (optional but recommended)
-   - Include `LICENSE` file (if applicable)
+2. Copy files:
+   - `DesktopCompanions.exe`
+   - `Assets/` folder (with `cat_running_spritesheet.png`)
 
-3. **Create a ZIP archive:**
-   - Use Windows Explorer, 7-Zip, or command line:
-     ```bash
-     # Using PowerShell
-     Compress-Archive -Path .\DesktopCompanions-v1.0.0\* -DestinationPath .\DesktopCompanions-v1.0.0-win-x64.zip
-     ```
-
-### Step 5: Create GitHub Release
-
-1. **Create a release tag:**
-   ```bash
-   git tag -a v1.0.0 -m "Release version 1.0.0"
-   git push origin v1.0.0
+3. Create ZIP archive:
+   ```powershell
+   Compress-Archive -Path DesktopCompanions-v1.0.0\* -DestinationPath DesktopCompanions-v1.0.0.zip
    ```
-
-2. **Draft a new release on GitHub:**
-   - Go to your repository → Releases → Draft a new release
-   - Select the tag you just created
-   - Add release title: "Desktop Companions v1.0.0"
-   - Add release notes describing features and changes
-
-3. **Upload the ZIP file:**
-   - Drag and drop `DesktopCompanions-v1.0.0-win-x64.zip` to the release
-   - Add a description of what's included
-
-4. **Publish the release**
-
-### Distribution Package Structure
-
-```
-DesktopCompanions-v1.0.0-win-x64.zip
-├── DesktopCompanions.exe          # Main executable
-├── DesktopCompanions.dll          # Application DLL (if not single-file)
-├── [Runtime files]                # .NET runtime and dependencies
-├── README.md                       # User documentation
-└── LICENSE                         # License file
-```
-
-### Alternative: Framework-Dependent Build
-
-For a smaller distribution (requires .NET 8.0 Runtime installed):
-
-```bash
-dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
-```
-
-**Note:** Users will need to install .NET 8.0 Runtime separately from [Microsoft's website](https://dotnet.microsoft.com/download/dotnet/8.0).
 
 ### Size Considerations
 
-- **Self-contained single-file**: ~60-80 MB (includes full .NET runtime)
-- **Framework-dependent**: ~2-5 MB (requires .NET runtime installation)
-- **Self-contained multi-file**: ~60-80 MB total (multiple files, faster startup)
-
-### Testing the Distribution Package
-
-Before releasing:
-
-1. Extract the ZIP to a clean test folder
-2. Run `DesktopCompanions.exe` from the extracted location
-3. Verify:
-   - Application launches correctly
-   - Widgets appear and function
-   - Settings window opens
-   - System tray icon appears
-   - Settings save and load correctly
-   - Startup option works
-
-### Code Signing (Optional but Recommended)
-
-For production releases, consider code signing to avoid Windows security warnings:
-
-1. Obtain a code signing certificate
-2. Sign the executable:
-   ```bash
-   signtool sign /f certificate.pfx /p password DesktopCompanions.exe
-   ```
-
-### Version Information
-
-Update version in `DesktopCompanion.csproj`:
-```xml
-<PropertyGroup>
-  <Version>1.0.0</Version>
-  <AssemblyVersion>1.0.0.0</AssemblyVersion>
-  <FileVersion>1.0.0.0</FileVersion>
-</PropertyGroup>
-```
+- **Self-contained single-file**: ~68 MB (includes full .NET 8.0 runtime)
+- **Assets folder**: ~2 KB (sprite sheet)
+- **Total distribution**: ~68 MB
 
 ## Troubleshooting
 
 ### Widgets Not Appearing
-- Check if widgets are enabled in settings
-- Ensure the application is running (check system tray)
-- Try resetting widget positions
+- Check if widgets are enabled in settings (right-click system tray icon)
+- Ensure the application is running (check system tray for cat/jar icon)
+- Try resetting widget positions in settings
+- Check error log at `%AppData%\DesktopCompanion\error.log`
+
+### Cat Animation Not Working
+- Ensure `Assets/cat_running_spritesheet.png` is in the same folder as the executable
+- Check error log for sprite sheet loading errors
+- Verify the sprite sheet file is not corrupted
 
 ### Performance Counters Not Working
 - Run the application as Administrator (may be required for some performance counters)
 - Check Windows Performance Monitor to verify counters are accessible
+- Some antivirus software may block performance counter access
 
 ### Battery Widget Not Showing Correct Status
 - The widget requires WMI access (usually available by default)
 - On desktop computers without a battery, the widget will show a default state
+- Check if your system reports battery status correctly in Windows
 
 ### Click-Through Not Working
 - Click-through is implemented for the entire window except the drag handle
 - The drag handle is a 10px transparent border around each widget
 - If you can't drag widgets, try clicking closer to the edges
+- Ensure the widget is not minimized or hidden
+
+### Application Crashes on Startup
+- Check error log at `%AppData%\DesktopCompanion\error.log`
+- Ensure .NET 8.0 runtime is available (included in self-contained build)
+- Try running as Administrator
+- Check Windows Event Viewer for detailed error messages
+
+## Development
+
+### Prerequisites
+- .NET 8.0 SDK
+- Visual Studio 2022 or later (or Visual Studio Code with C# extension)
+- Windows 10/11 SDK
+
+### Running in Debug Mode
+```bash
+dotnet run
+```
+
+### Generating Cat Sprite Sheet
+A Python script is included to generate the cat sprite sheet:
+```bash
+python generate_cat_sprite.py
+```
+
+This generates `cat_running_spritesheet.png` with 16 frames of pixel art animation.
 
 ## Contributing
 
@@ -358,12 +327,16 @@ This project is open source and available under the [MIT License](LICENSE).
 
 - Built with C# and WPF
 - Inspired by desktop pet widgets and system monitoring tools
+- Pixel art sprite sheet generated programmatically
 
 ## Support
 
-For issues, questions, or feature requests, please open an issue on the [GitHub Issues](https://github.com/yourusername/desktop-companion/issues) page.
+For issues, questions, or feature requests, please open an issue on the [GitHub Issues](https://github.com/IshaanGhost/desktop-companion/issues) page.
+
+## Repository
+
+**GitHub**: [https://github.com/IshaanGhost/desktop-companion](https://github.com/IshaanGhost/desktop-companion)
 
 ---
 
 **Enjoy your desktop companions!** 🐱🧪
-
