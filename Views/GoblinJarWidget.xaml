@@ -9,8 +9,8 @@
         Topmost="True"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        Width="120"
-        Height="140">
+        Width="60"
+        Height="70">
     
     <Window.Resources>
         <!-- High Animation - Normal movement -->
@@ -73,148 +73,72 @@
             <!-- Jar Display Area -->
             <Viewbox Stretch="Uniform">
                 <Canvas Width="80" Height="100" ClipToBounds="True">
-                    <!-- Glow effect - bound to ViewModel with DataTriggers for color -->
-                    <Ellipse x:Name="JarGlow" 
-                            Width="100" Height="120" 
-                            Canvas.Left="-10" Canvas.Top="-10"
-                            Opacity="{Binding GlowIntensity}">
-                        <Ellipse.Fill>
-                            <SolidColorBrush Color="#FFFFFF00"/>
-                        </Ellipse.Fill>
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="High">
-                                        <Setter Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="#FFFFFF00"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Medium">
-                                        <Setter Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="#FFFFA500"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Low">
-                                        <Setter Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="#FFFF8C00"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Critical">
-                                        <Setter Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="#FFFF0000"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Charging">
-                                        <Setter Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="#FF00FF00"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Full">
-                                        <Setter Property="Fill">
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="#FF00FFFF"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
-
-                    <!-- Jar Container - Translucent blue-tinted glass outline -->
-                    <Path x:Name="JarOutline" 
-                          Canvas.Left="10" Canvas.Top="10"
-                          Data="M 40,12 Q 40,8 35,8 L 35,85 L 45,85 L 45,8 Q 40,8 40,12 Z M 35,15 L 45,15 L 47,85 L 33,85 L 35,15 Z"
-                          StrokeThickness="2.5"
-                          Stroke="#FF5AA5F5"
-                          Fill="#505AA5F5">
-                        <Path.Effect>
-                            <DropShadowEffect BlurRadius="8" ShadowDepth="2" Color="#505AA5F5" Opacity="0.6"/>
-                        </Path.Effect>
-                    </Path>
-                    
-                    <!-- Jar Glass Fill - Translucent blue tint -->
-                    <Path x:Name="JarGlass" 
-                          Canvas.Left="10" Canvas.Top="10"
-                          Data="M 35,15 L 45,15 L 47,85 L 33,85 Z"
-                          Fill="#404A90E2"
-                          Opacity="0.3">
-                        <Path.Effect>
-                            <BlurEffect Radius="1"/>
-                        </Path.Effect>
-                    </Path>
-
-                    <!-- Goblin Sprite - Glowing green ellipse -->
-                    <Ellipse x:Name="GoblinSprite" 
-                             Canvas.Left="28" 
-                             Canvas.Top="45"
-                             Width="24" 
-                             Height="24"
-                             RenderTransformOrigin="0.5,0.5">
-                        <Ellipse.Fill>
-                            <SolidColorBrush x:Name="GoblinGlowBrush" Color="#FF00FF88"/>
-                        </Ellipse.Fill>
-                        <Ellipse.Effect>
-                            <DropShadowEffect x:Name="GoblinGlowEffect"
-                                              BlurRadius="12" 
-                                              ShadowDepth="0" 
-                                              Color="#FF00FF88" 
-                                              Opacity="0.8"/>
-                        </Ellipse.Effect>
-                        <Ellipse.RenderTransform>
-                            <TransformGroup>
-                                <TranslateTransform/>
-                                <RotateTransform/>
-                            </TransformGroup>
-                        </Ellipse.RenderTransform>
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Style.Triggers>
-                                    <!-- DataTriggers to control animation based on ViewModel state -->
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="High">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource HighAnimation}"/>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Medium">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource MediumAnimation}"/>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Low">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource LowAnimation}"/>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Critical">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource CriticalAnimation}"/>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Charging">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource ChargingAnimation}"/>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="Full">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard Storyboard="{StaticResource FullAnimation}"/>
-                                        </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
+                            <!-- Jar Icon Display -->
+                            <Image x:Name="JarIconImage" 
+                                   Width="40" Height="50"
+                                   RenderTransformOrigin="0.5,0.5"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center">
+                                <Image.RenderTransform>
+                                    <TransformGroup>
+                                        <TranslateTransform/>
+                                        <RotateTransform/>
+                                    </TransformGroup>
+                                </Image.RenderTransform>
+                                <Image.ToolTip>
+                                    <ToolTip>
+                                        <StackPanel>
+                                            <TextBlock Text="Goblin's Jar Widget" FontWeight="Bold" Margin="0,0,0,5"/>
+                                            <TextBlock>
+                                                <Run Text="Battery: "/>
+                                                <Run Text="{Binding BatteryLifePercent, StringFormat={}{0:F0}%}" FontWeight="Bold"/>
+                                            </TextBlock>
+                                            <TextBlock>
+                                                <Run Text="Status: "/>
+                                                <Run Text="{Binding BatteryStatusText}" FontWeight="Bold"/>
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding AnimationStateName}" Margin="0,5,0,0" FontStyle="Italic"/>
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Image.ToolTip>
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <!-- DataTriggers to control animation based on ViewModel state -->
+                                            <DataTrigger Binding="{Binding AnimationStateName}" Value="High">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource HighAnimation}"/>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding AnimationStateName}" Value="Medium">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource MediumAnimation}"/>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding AnimationStateName}" Value="Low">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource LowAnimation}"/>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding AnimationStateName}" Value="Critical">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource CriticalAnimation}"/>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding AnimationStateName}" Value="Charging">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource ChargingAnimation}"/>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding AnimationStateName}" Value="Full">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Storyboard="{StaticResource FullAnimation}"/>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
                 </Canvas>
             </Viewbox>
         </Border>

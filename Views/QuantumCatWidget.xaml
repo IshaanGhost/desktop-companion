@@ -9,8 +9,8 @@
         Topmost="True"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        Width="100"
-        Height="100">
+        Width="50"
+        Height="50">
     
     <Window.Resources>
         <!-- Sprite sheet animations are handled in code-behind -->
@@ -34,35 +34,31 @@
             <!-- Cat Display Area -->
             <Viewbox Stretch="Uniform">
                 <Canvas Width="64" Height="64" ClipToBounds="True">
-                    <!-- Glow effect for critical state -->
-                    <Ellipse x:Name="CatGlow" 
-                            Width="80" Height="80" 
-                            Canvas.Left="-8" Canvas.Top="-8"
-                            Opacity="0.3">
-                        <Ellipse.Fill>
-                            <SolidColorBrush Color="#00FF0000"/>
-                        </Ellipse.Fill>
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding AnimationStateName}" Value="HighLoad">
-                                        <Setter Property="Opacity" Value="0.6"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
-
-                    <!-- Cat Sprite Sheet Image -->
-                    <Image x:Name="CatImage" 
+                    <!-- Cat Icon Display -->
+                    <Image x:Name="CatIconImage" 
                            Width="32" Height="32"
-                           RenderTransformOrigin="0.5,0.5">
+                           RenderTransformOrigin="0.5,0.5"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
                         <Image.RenderTransform>
                             <TranslateTransform/>
                         </Image.RenderTransform>
-                        <Image.Clip>
-                            <RectangleGeometry x:Name="SpriteClip" Rect="0,0,32,32"/>
-                        </Image.Clip>
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <StackPanel>
+                                    <TextBlock Text="Quantum Cat Widget" FontWeight="Bold" Margin="0,0,0,5"/>
+                                    <TextBlock>
+                                        <Run Text="CPU Usage: "/>
+                                        <Run Text="{Binding CpuLoad, StringFormat={}{0:F1}%}" FontWeight="Bold"/>
+                                    </TextBlock>
+                                    <TextBlock>
+                                        <Run Text="RAM Usage: "/>
+                                        <Run Text="{Binding RamUsage, StringFormat={}{0:F1}%}" FontWeight="Bold"/>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding AnimationStateName}" Margin="0,5,0,0" FontStyle="Italic"/>
+                                </StackPanel>
+                            </ToolTip>
+                        </Image.ToolTip>
                     </Image>
                 </Canvas>
             </Viewbox>

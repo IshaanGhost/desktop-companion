@@ -33,8 +33,7 @@ namespace DesktopCompanions
             // Save settings
             _viewModel.SaveSettings();
 
-            // Refresh widgets in the application
-            _app?.RefreshWidgets();
+            // Settings saved - icon animation will update automatically based on monitoring
 
             // Close window
             this.Hide();

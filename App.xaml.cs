@@ -34,10 +34,10 @@ namespace DesktopCompanions
                 _performanceMonitor = new PerformanceMonitorService();
                 _performanceMonitor.StartMonitoring();
 
-                // Initialize system tray
+                // Initialize system tray with icon animation
                 try
                 {
-                    _systemTrayService = new SystemTrayService();
+                    _systemTrayService = new SystemTrayService(_performanceMonitor);
                     _systemTrayService.Initialize();
                     _systemTrayService.ShowConfiguration += OnShowConfiguration;
                     _systemTrayService.ExitApplication += OnExitApplication;
@@ -45,21 +45,19 @@ namespace DesktopCompanions
                 catch (Exception ex)
                 {
                     LogError($"Failed to initialize system tray: {ex}");
-                    // Continue without system tray - app should still work
+                    MessageBox.Show(
+                        $"Failed to initialize system tray.\n\nError: {ex.Message}",
+                        "Startup Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    Shutdown();
+                    return;
                 }
 
-                // Create configuration window (hidden by default)
-                try
-                {
-                    _configurationWindow = new MainWindow(_performanceMonitor, _settingsService);
-                    _configurationWindow.Closed += (s, args) => { _configurationWindow = null; };
-                }
-                catch (Exception ex)
-                {
-                    LogError($"Failed to create configuration window: {ex}");
-                }
+                // Create configuration window (hidden by default, only shown when requested)
+                // Don't create it on startup - only create when user opens settings
 
-                // Load widgets based on settings
+                // Load widgets - show cat and jar on desktop
                 LoadWidgets();
             }
             catch (Exception ex)
@@ -81,63 +79,54 @@ namespace DesktopCompanions
 
         private void LoadWidgets()
         {
-            if (_settingsService == null || _performanceMonitor == null) return;
+            if (_performanceMonitor == null) return;
+
+            // Get screen dimensions and taskbar height
+            var screenWidth = SystemParameters.PrimaryScreenWidth;
+            var screenHeight = SystemParameters.PrimaryScreenHeight;
+            var taskbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.WorkArea.Height;
+            var workAreaBottom = SystemParameters.WorkArea.Bottom;
 
             try
             {
-                var settings = _settingsService.Settings;
-
                 // Load Quantum Cat Widget
-                if (settings.EnableQuantumCat)
+                if (_catWidget == null)
                 {
-                    try
-                    {
-                        if (_catWidget == null)
-                        {
-                            _catWidget = new QuantumCatWidget(_performanceMonitor);
-                            _catWidget.Closed += (s, args) => { _catWidget = null; };
-                        }
-                        _catWidget.Show();
-                    }
-                    catch (Exception ex)
-                    {
-                        LogError($"Failed to load Quantum Cat widget: {ex}");
-                    }
+                    _catWidget = new QuantumCatWidget(_performanceMonitor);
+                    _catWidget.Closed += (s, args) => { _catWidget = null; };
+                    
+                    // Position right above taskbar (bottom-right corner)
+                    _catWidget.Left = screenWidth - _catWidget.Width - 20;
+                    _catWidget.Top = workAreaBottom - _catWidget.Height - 10; // 10px above taskbar
                 }
-                else
-                {
-                    _catWidget?.Close();
-                    _catWidget = null;
-                }
-
-                // Load Goblin Jar Widget
-                if (settings.EnableGoblinJar)
-                {
-                    try
-                    {
-                        if (_jarWidget == null)
-                        {
-                            _jarWidget = new GoblinJarWidget(_performanceMonitor);
-                            _jarWidget.Closed += (s, args) => { _jarWidget = null; };
-                        }
-                        _jarWidget.Show();
-                    }
-                    catch (Exception ex)
-                    {
-                        LogError($"Failed to load Goblin Jar widget: {ex}");
-                    }
-                }
-                else
-                {
-                    _jarWidget?.Close();
-                    _jarWidget = null;
-                }
+                _catWidget.Show();
             }
             catch (Exception ex)
             {
-                LogError($"Failed to load widgets: {ex}");
+                LogError($"Failed to load Quantum Cat widget: {ex}");
+            }
+
+            try
+            {
+                // Load Goblin Jar Widget
+                if (_jarWidget == null)
+                {
+                    _jarWidget = new GoblinJarWidget(_performanceMonitor);
+                    _jarWidget.Closed += (s, args) => { _jarWidget = null; };
+                    
+                    // Position right above taskbar (to the left of cat)
+                    var catWidth = _catWidget?.Width ?? 100;
+                    _jarWidget.Left = screenWidth - _jarWidget.Width - catWidth - 30;
+                    _jarWidget.Top = workAreaBottom - _jarWidget.Height - 10; // 10px above taskbar, aligned with cat
+                }
+                _jarWidget.Show();
+            }
+            catch (Exception ex)
+            {
+                LogError($"Failed to load Goblin Jar widget: {ex}");
             }
         }
+
 
         private void OnShowConfiguration(object? sender, EventArgs e)
         {
@@ -178,13 +167,6 @@ namespace DesktopCompanions
             _performanceMonitor?.Dispose();
         }
 
-        /// <summary>
-        /// Called when settings are updated to reload widgets
-        /// </summary>
-        public void RefreshWidgets()
-        {
-            LoadWidgets();
-        }
 
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {

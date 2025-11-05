@@ -1,11 +1,18 @@
 using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using DesktopCompanions.Services;
 using DesktopCompanions.ViewModels;
+using DesktopCompanions.Utils;
 using DesktopCompanion; // WindowUtils is in DesktopCompanion namespace
+using Point = System.Drawing.Point;
+using Color = System.Drawing.Color;
+using Pen = System.Drawing.Pen;
 
 namespace DesktopCompanions
 {
@@ -16,11 +23,11 @@ namespace DesktopCompanions
     {
         private readonly CatWidgetViewModel _viewModel;
         private bool _isDragging = false;
-        private Point _dragStartPoint;
+        private System.Windows.Point _dragStartPoint;
         private DispatcherTimer? _animationTimer;
         private int _currentFrame = 0;
-        private const int TotalFrames = 16;
-        private const int FrameWidth = 32;
+        private const int CatFrameCount = 8; // 8 cat animation frames
+        private Icon[]? _catIcons;
 
         public QuantumCatWidget(PerformanceMonitorService performanceMonitor)
         {
@@ -43,40 +50,91 @@ namespace DesktopCompanions
             // Set window properties
             Topmost = true;
 
-            // Load sprite sheet image
-            LoadSpriteSheet();
+            // Load cat icons
+            LoadCatIcons();
 
-            // Start sprite sheet animation
-            StartSpriteAnimation();
+            // Start icon animation
+            StartIconAnimation();
         }
 
-        private void LoadSpriteSheet()
+        private void LoadCatIcons()
         {
             try
             {
-                // Try pack URI first (works in normal builds)
-                var uri = new Uri("pack://application:,,,/Assets/cat_running_spritesheet.png", UriKind.Absolute);
-                var bitmap = new System.Windows.Media.Imaging.BitmapImage(uri);
-                CatImage.Source = bitmap;
+                _catIcons = new Icon[CatFrameCount];
+                for (int i = 0; i < CatFrameCount; i++)
+                {
+                    _catIcons[i] = CreateCatIcon(i + 1);
+                }
+                // Display first frame
+                UpdateCatIcon(0);
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback: try loading from file system (for single-file apps)
-                try
-                {
-                    var appDir = AppContext.BaseDirectory;
-                    var imagePath = System.IO.Path.Combine(appDir, "Assets", "cat_running_spritesheet.png");
-                    if (System.IO.File.Exists(imagePath))
-                    {
-                        var uri = new Uri(imagePath, UriKind.Absolute);
-                        var bitmap = new System.Windows.Media.Imaging.BitmapImage(uri);
-                        CatImage.Source = bitmap;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Failed to load sprite sheet: {ex.Message}");
-                }
+                System.Diagnostics.Debug.WriteLine($"Failed to load cat icons: {ex.Message}");
+            }
+        }
+
+        private Icon CreateCatIcon(int frameNumber)
+        {
+            // Create a 32x32 icon showing a running cat - half size for widget display
+            using (var bitmap = new Bitmap(32, 32))
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                graphics.Clear(Color.Transparent);
+
+                var catColor = Color.FromArgb(100, 100, 100);
+                var catDark = Color.Black;
+
+                // Animation offset based on frame
+                int offsetX = (frameNumber % 2) * 1;
+                int offsetY = (frameNumber % 4 < 2) ? 0 : 1;
+
+                // Cat head (scaled down for half size)
+                graphics.FillEllipse(new SolidBrush(catColor), 12 + offsetX, 4 + offsetY, 12, 12);
+                graphics.DrawEllipse(new Pen(catDark, 1), 12 + offsetX, 4 + offsetY, 12, 12);
+
+                // Cat ears (smaller triangles)
+                graphics.FillPolygon(new SolidBrush(catDark), new Point[] {
+                    new Point(14 + offsetX, 4 + offsetY), new Point(16 + offsetX, 0), new Point(18 + offsetX, 4 + offsetY)
+                });
+                graphics.FillPolygon(new SolidBrush(catDark), new Point[] {
+                    new Point(18 + offsetX, 4 + offsetY), new Point(20 + offsetX, 0), new Point(22 + offsetX, 4 + offsetY)
+                });
+
+                // Eyes
+                graphics.FillEllipse(new SolidBrush(Color.Black), 15 + offsetX, 8 + offsetY, 2, 2);
+                graphics.FillEllipse(new SolidBrush(Color.Black), 19 + offsetX, 8 + offsetY, 2, 2);
+
+                // Cat body
+                graphics.FillEllipse(new SolidBrush(catColor), 14 + offsetX, 14 + offsetY, 10, 10);
+                graphics.DrawEllipse(new Pen(catDark, 1), 14 + offsetX, 14 + offsetY, 10, 10);
+
+                // Cat tail (swings based on frame)
+                int tailOffset = (frameNumber % 3) - 1;
+                graphics.FillRectangle(new SolidBrush(catColor), 24 + offsetX + tailOffset, 16 + offsetY, 4, 6);
+                graphics.DrawRectangle(new Pen(catDark, 1), 24 + offsetX + tailOffset, 16 + offsetY, 4, 6);
+
+                // Convert bitmap to icon
+                var hIcon = bitmap.GetHicon();
+                return System.Drawing.Icon.FromHandle(hIcon);
+            }
+        }
+
+        private void UpdateCatIcon(int frameIndex)
+        {
+            if (_catIcons == null || frameIndex < 0 || frameIndex >= _catIcons.Length) return;
+            
+            try
+            {
+                var icon = _catIcons[frameIndex];
+                var bitmapImage = Utils.IconConverter.IconToBitmapImage(icon, 32);
+                CatIconImage.Source = bitmapImage;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to update cat icon: {ex.Message}");
             }
         }
 
@@ -89,7 +147,7 @@ namespace DesktopCompanions
             }
         }
 
-        private void StartSpriteAnimation()
+        private void StartIconAnimation()
         {
             _animationTimer = new DispatcherTimer();
             _animationTimer.Tick += AnimationTimer_Tick;
@@ -117,15 +175,9 @@ namespace DesktopCompanions
 
         private void AnimationTimer_Tick(object? sender, EventArgs e)
         {
-            // Update sprite sheet frame
-            _currentFrame = (_currentFrame + 1) % TotalFrames;
-            
-            // Update clip rectangle to show current frame
-            if (SpriteClip != null)
-            {
-                var xOffset = _currentFrame * FrameWidth;
-                SpriteClip.Rect = new Rect(xOffset, 0, FrameWidth, FrameWidth);
-            }
+            // Update cat icon frame
+            _currentFrame = (_currentFrame + 1) % CatFrameCount;
+            UpdateCatIcon(_currentFrame);
         }
 
         private void SetClickThrough()
@@ -172,6 +224,16 @@ namespace DesktopCompanions
         {
             _animationTimer?.Stop();
             _animationTimer = null;
+
+            // Dispose icons
+            if (_catIcons != null)
+            {
+                foreach (var icon in _catIcons)
+                {
+                    icon?.Dispose();
+                }
+            }
+
             base.OnClosed(e);
         }
     }

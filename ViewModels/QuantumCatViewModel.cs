@@ -86,12 +86,21 @@ namespace DesktopCompanions.ViewModels
         /// </summary>
         public double CpuLoad => _performanceMonitor.CpuLoad;
 
+        /// <summary>
+        /// Current RAM usage (exposed for binding)
+        /// </summary>
+        public double RamUsage => _performanceMonitor.RamUsagePercent;
+
         private void OnPerformanceMonitorPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(PerformanceMonitorService.CpuLoad))
             {
                 UpdateState(_performanceMonitor.CpuLoad);
                 OnPropertyChanged(nameof(CpuLoad));
+            }
+            else if (e.PropertyName == nameof(PerformanceMonitorService.RamUsagePercent))
+            {
+                OnPropertyChanged(nameof(RamUsage));
             }
         }
 

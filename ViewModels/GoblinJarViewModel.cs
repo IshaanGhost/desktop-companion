@@ -123,6 +123,23 @@ namespace DesktopCompanions.ViewModels
         /// </summary>
         public PowerLineStatus BatteryStatus => _performanceMonitor.BatteryStatus;
 
+        /// <summary>
+        /// Battery status as readable text
+        /// </summary>
+        public string BatteryStatusText
+        {
+            get
+            {
+                return BatteryStatus switch
+                {
+                    PowerLineStatus.Online => "Charging",
+                    PowerLineStatus.Offline => "On Battery",
+                    PowerLineStatus.Unknown => "Unknown",
+                    _ => "Not Present"
+                };
+            }
+        }
+
         private void OnPerformanceMonitorPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(PerformanceMonitorService.BatteryLifePercent) ||
@@ -131,6 +148,7 @@ namespace DesktopCompanions.ViewModels
                 UpdateState(_performanceMonitor.BatteryLifePercent, _performanceMonitor.BatteryStatus);
                 OnPropertyChanged(nameof(BatteryLifePercent));
                 OnPropertyChanged(nameof(BatteryStatus));
+                OnPropertyChanged(nameof(BatteryStatusText));
             }
         }
 
